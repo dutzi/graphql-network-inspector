@@ -54,7 +54,7 @@ const HeaderListItem = (props: { header: IHeader }) => {
           )})` as unknown as number
         }
         return (
-          <pre style={{ fontFamily: "Menlo, monospaced" }}>
+          <pre style={{ fontFamily: "Menlo, monospaced", fontSize: "11px" }}>
             {JSON.stringify(jwt, null, 2)}
           </pre>
         )
