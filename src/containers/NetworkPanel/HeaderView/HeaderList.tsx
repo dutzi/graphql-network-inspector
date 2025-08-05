@@ -44,7 +44,7 @@ const HeaderListItem = (props: { header: IHeader }) => {
   }
 
   function renderValue() {
-    if (header.name === "authorization") {
+    if (header.name.toLowerCase() === "authorization") {
       try {
         const jwt = jwtDecode(header.value ?? "")
         if (jwt.exp) {
