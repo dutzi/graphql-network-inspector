@@ -31,9 +31,48 @@ const CodeTooLargeMessage = () => {
   )
 }
 
+function jsonTryParse(text: string) {
+  try {
+    return JSON.parse(text)
+  } catch (e) {
+    return text
+  }
+}
+
+function jsonParseDeep(text: string) {
+  function visit(text: any): any {
+    if (text === null) {
+      return null
+    }
+
+    if (typeof text === "object") {
+      const keys = Object.keys(text)
+      const result: any = {}
+      for (const key of keys) {
+        result[key] = visit(text[key])
+      }
+      return result
+    } else {
+      const parsedText = jsonTryParse(text)
+      if (typeof parsedText === "object") {
+        return visit(parsedText)
+      } else {
+        return parsedText
+      }
+    }
+  }
+
+  const result = visit(text)
+  return typeof result === "object" && result !== null
+    ? JSON.stringify(result, null, 2)
+    : result
+}
+
 const CodeRenderer = (props: ICodeViewProps) => {
   const { text, language, autoFormat } = props
-  const formattedText = useFormattedCode(text, language, autoFormat)
+
+  const deepParsedText = jsonParseDeep(text)
+  const formattedText = useFormattedCode(deepParsedText, language, autoFormat)
 
   const { markup: jsonMarkup, loading } = useHighlight(language, formattedText)
   const ref = useMarkSearch(jsonMarkup)
